@@ -14,6 +14,16 @@ Important:
 from dataclasses import dataclass
 
 
+# Terminal theme inspired by the Georgia Family Law Resource Center palette.
+NAVY = "\033[38;2;20;32;84m"
+GOLD = "\033[38;2;243;178;94m"
+ORANGE = "\033[38;2;244;114;22m"
+MUTED = "\033[38;2;206;213;224m"
+WHITE = "\033[97m"
+BOLD = "\033[1m"
+RESET = "\033[0m"
+
+
 BASIC_SUPPORT_TABLE_MONTHLY = [
     # (combined_monthly_income_ceiling, basic_support_for_1_child, for_2, for_3, for_4)
     (1500, 285, 430, 500, 560),
@@ -115,6 +125,10 @@ def _money(value: float) -> str:
     return f"${value:,.2f}"
 
 
+def _themed(text: str, *styles: str) -> str:
+    return f"{''.join(styles)}{text}{RESET}"
+
+
 def prompt_parent(name: str) -> ParentInputs:
     print(f"\nEnter {name} information:")
     gross = float(input("Gross monthly income: ").strip())
@@ -133,9 +147,10 @@ def prompt_parent(name: str) -> ParentInputs:
 
 
 def main() -> None:
-    print("Georgia Child Support Calculator (Estimate)")
-    print("Based on Georgia's income-shares framework under O.C.G.A. § 19-6-15.")
-    print("This tool is educational and not legal advice.\n")
+    print(_themed("Georgia Child Support Calculator", BOLD, GOLD))
+    print(_themed("Family Law Resource Center Theme", ORANGE))
+    print(_themed("Based on Georgia's income-shares framework under O.C.G.A. § 19-6-15.", NAVY))
+    print(_themed("This tool is educational and not legal advice.\n", MUTED))
 
     children = int(input("Number of children in this case (1-4): ").strip())
     parent_a = prompt_parent("Parent A")
@@ -143,17 +158,17 @@ def main() -> None:
 
     result = calculate_support(parent_a, parent_b, children)
 
-    print("\n===== Estimated Georgia Child Support Worksheet Summary =====")
-    print(f"Combined adjusted monthly income: {_money(result.combined_adjusted_income)}")
-    print(f"Basic child support obligation: {_money(result.basic_child_support_obligation)}")
-    print(f"Total support obligation (with add-ons): {_money(result.total_support_obligation)}")
-    print(f"Parent A income share: {result.parent_a_share_percent:.2f}%")
-    print(f"Parent B income share: {result.parent_b_share_percent:.2f}%")
-    print(f"Parent A presumptive obligation: {_money(result.parent_a_presumptive_obligation)}")
-    print(f"Parent B presumptive obligation: {_money(result.parent_b_presumptive_obligation)}")
+    print(_themed("\n===== Estimated Georgia Child Support Worksheet Summary =====", BOLD, NAVY))
+    print(_themed(f"Combined adjusted monthly income: {_money(result.combined_adjusted_income)}", WHITE))
+    print(_themed(f"Basic child support obligation: {_money(result.basic_child_support_obligation)}", WHITE))
+    print(_themed(f"Total support obligation (with add-ons): {_money(result.total_support_obligation)}", WHITE))
+    print(_themed(f"Parent A income share: {result.parent_a_share_percent:.2f}%", GOLD))
+    print(_themed(f"Parent B income share: {result.parent_b_share_percent:.2f}%", GOLD))
+    print(_themed(f"Parent A presumptive obligation: {_money(result.parent_a_presumptive_obligation)}", ORANGE))
+    print(_themed(f"Parent B presumptive obligation: {_money(result.parent_b_presumptive_obligation)}", ORANGE))
 
-    print("\nNote: Final court-ordered support may differ due to deviations,")
-    print("parenting time adjustments, low/high income rules, and judicial findings.")
+    print(_themed("\nNote: Final court-ordered support may differ due to deviations,", MUTED))
+    print(_themed("parenting time adjustments, low/high income rules, and judicial findings.", MUTED))
 
 
 if __name__ == "__main__":
